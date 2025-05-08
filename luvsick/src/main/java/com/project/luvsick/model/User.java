@@ -2,9 +2,7 @@ package com.project.luvsick.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,6 +13,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "Users")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,11 +29,6 @@ public class User extends BaseEntity {
     @JsonIgnore
     @Column(nullable = false)
     private String password;
-
-    @Transient
-    @JsonIgnore
-    private String confirmPwd;
-
 
     @JsonIgnore
     @Column(nullable = false)

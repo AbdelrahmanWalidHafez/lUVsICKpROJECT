@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class luvsickUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
+public class LuvsickUsernamePasswordAuthenticationProvider implements AuthenticationProvider {
     private final UserDetailsService userDetailsService;
 
     private  final PasswordEncoder passwordEncoder;

@@ -21,6 +21,6 @@ public class Category extends  BaseEntity {
 
     @Column(nullable = false,unique = true)
     private String name;
-    @OneToMany(mappedBy = "Product",cascade =CascadeType.ALL)
+    @OneToMany(mappedBy = "category",cascade =CascadeType.ALL)
     private List<Product> posts=new ArrayList<>();
 }

@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,15 +23,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import io.jsonwebtoken.security.Keys;
-
+@Slf4j
+@RequiredArgsConstructor
 public class JWTTokenValidationFilter extends OncePerRequestFilter {
+    private final Environment env;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt =  extractJwtFromCookie(request);
         if (null != jwt) {
             try {
                 Environment environment = getEnvironment();
-                String secret = environment.getProperty("JWT_SECRET");
+                String secret=env.getProperty("JWT_SECRET");
+                if (secret==null)log.error("zeby");
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
                 Claims claims = Jwts
                         .parser()
@@ -51,7 +56,7 @@ public class JWTTokenValidationFilter extends OncePerRequestFilter {
     }
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().startsWith("/api/v1/auth");
+        return request.getServletPath().equals("/api/v1/auth/login");
     }
 
     private String extractJwtFromCookie(HttpServletRequest request) {

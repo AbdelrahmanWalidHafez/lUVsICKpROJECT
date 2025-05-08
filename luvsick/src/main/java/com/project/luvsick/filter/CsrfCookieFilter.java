@@ -20,7 +20,6 @@ public class CsrfCookieFilter extends OncePerRequestFilter {
             Cookie cookie = new Cookie("XSRF-TOKEN", csrfToken.getToken());
             cookie.setPath("/");
             cookie.setSecure(false);
-            cookie.setHttpOnly(false);
             response.addCookie(cookie);
         }
         filterChain.doFilter(request,response);
