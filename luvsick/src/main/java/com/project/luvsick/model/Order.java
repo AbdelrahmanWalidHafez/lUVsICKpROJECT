@@ -6,6 +6,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -38,4 +39,10 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    @ElementCollection
+    @CollectionTable(name="order_product_sizes",
+    joinColumns = @JoinColumn(name = "order_id"))
+    @MapKeyColumn(name = "product_size_id")
+    @Column(name="quantity")
+    private Map<UUID,Integer>itemPerQuantity;
 }

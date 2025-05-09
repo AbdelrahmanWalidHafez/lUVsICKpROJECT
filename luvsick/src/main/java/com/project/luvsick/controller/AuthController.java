@@ -8,6 +8,7 @@ import com.project.luvsick.model.Authority;
 import com.project.luvsick.model.User;
 import com.project.luvsick.repo.UserRepository;
 import com.project.luvsick.service.AuthService;
+import jakarta.persistence.EntityExistsException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -16,13 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -32,6 +33,7 @@ public class AuthController {
     private final AuthService authService;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid LoginRequestDTO loginRequestDTO, HttpServletResponse response){
         String jwt = authService.authenticate(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
@@ -46,6 +48,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterUserRequestDTO registerUserRequestDTO){
+        if(userRepository.findByEmail(registerUserRequestDTO.getEmail()).isPresent()){
+            throw new EntityExistsException("this user already exists");
+        }
         User user=userMapper.toUser(registerUserRequestDTO);
         Authority authority=new Authority("ROLE_"+registerUserRequestDTO.getAuthorityName());
         user.setAuthorities(Set.of(authority));
@@ -79,5 +84,16 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<UserDTO>>getAllUsers(){
+        List<UserDTO> userDTOS=userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
+        return ResponseEntity.ok(userDTOS);
+    }
+    @DeleteMapping(path = "/{uuid}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID uuid){
+        userRepository.deleteById(uuid);
+        log.info("deleted a user");
+        return ResponseEntity.noContent().build();
     }
 }

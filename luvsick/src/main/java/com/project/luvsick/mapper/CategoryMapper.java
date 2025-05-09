@@ -18,9 +18,6 @@ public class CategoryMapper {
                 .builder()
                 .id(category.getId())
                 .name(category.getName())
-                .createdAt(category.getCreatedAt())
-                .updatedAt(category.getUpdatedAt())
-                .updatedBy(category.getUpdatedBy())
                 .build();
     }
 }

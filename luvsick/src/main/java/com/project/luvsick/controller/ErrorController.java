@@ -3,6 +3,8 @@ package com.project.luvsick.controller;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.project.luvsick.dto.ApiErrorResponse;
+import com.project.luvsick.exception.InsufficientStockException;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -209,5 +211,37 @@ public class ErrorController {
                 .path(request.getRequestURI())
                 .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ApiErrorResponse> handleInsufficientStockException(
+            InsufficientStockException ex, 
+            HttpServletRequest request) {
+        log.error("Insufficient stock error: {}", ex.getMessage());
+        
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message("Insufficient stock")
+                .errors(Collections.singletonList(ex.getMessage()))
+                .path(request.getRequestURI())
+                .build();
+        
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleEntityExistsException(
+            EntityExistsException ex,
+            HttpServletRequest request) {
+        log.error("Entity exists error: {}", ex.getMessage());
+        
+        ApiErrorResponse errorResponse = ApiErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .message("Resource already exists")
+                .errors(Collections.singletonList(ex.getMessage()))
+                .path(request.getRequestURI())
+                .build();
+        
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 }

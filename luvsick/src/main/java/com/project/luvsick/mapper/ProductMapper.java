@@ -1,6 +1,6 @@
 package com.project.luvsick.mapper;
-import com.project.luvsick.dto.AddProductRequestDTO;
-import com.project.luvsick.dto.AddProductResponseDTO;
+import com.project.luvsick.dto.ProductDTO;
+import com.project.luvsick.dto.ProductResponseDTO;
 import com.project.luvsick.model.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final ProductSizesMapper productSizesMapper;
-    public Product toProduct(AddProductRequestDTO addProductRequestDTO){
+    public Product toProduct(ProductDTO productDTO){
         Product product = Product
                 .builder()
-                .name(addProductRequestDTO.getName())
-                .price(addProductRequestDTO.getPrice())
-                .description(addProductRequestDTO.getDescription())
-                .discount(addProductRequestDTO.getDiscount())
-                .cost(addProductRequestDTO.getCost())
+                .name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .description(productDTO.getDescription())
+                .discount(productDTO.getDiscount())
+                .cost(productDTO.getCost())
                 .build();
-        product.setSizes(addProductRequestDTO
+        product.setSizes(productDTO
                 .getSizes()
                 .stream()
                 .map(sizeDTO -> {
@@ -34,8 +34,8 @@ public class ProductMapper {
         return product;
     }
 
-    public AddProductResponseDTO toDTO(Product product) {
-        return AddProductResponseDTO
+    public ProductResponseDTO toDTO(Product product) {
+        return ProductResponseDTO
                 .builder()
                 .id(product.getId())
                 .description(product.getDescription())
@@ -44,6 +44,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .discount(product.getDiscount())
                 .categoryResponseDTO(categoryMapper.toDto(product.getCategory()))
+                .productSizeDTOS(product.getSizes().stream().map(productSizesMapper::toDto).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddProductRequestDTO {
+public class ProductDTO {
     @NotBlank(message = "Product name is required")
     @Size(min = 3, max = 100, message = "Product name must be between 3 and 100 characters")
     private String name;
@@ -33,7 +33,6 @@ public class AddProductRequestDTO {
     @Size(min = 10, max = 1000, message = "Description must be between 10 and 1000 characters")
     private String description;
 
-    @NotEmpty(message = "At least one size is required")
     private List<ProductSizeDTO> sizes;
 
     @Min(value = 0, message = "Discount must be at least 0")

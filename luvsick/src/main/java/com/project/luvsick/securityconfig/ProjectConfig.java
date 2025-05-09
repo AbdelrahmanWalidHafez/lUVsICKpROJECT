@@ -2,6 +2,7 @@ package com.project.luvsick.securityconfig;
 
 import com.project.luvsick.filter.CsrfCookieFilter;
 import com.project.luvsick.filter.JWTTokenValidationFilter;
+
 import com.project.luvsick.handler.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import java.util.Collections;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @RequiredArgsConstructor
 @Configuration
@@ -36,29 +37,48 @@ public class ProjectConfig {
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer
                         .configurationSource(request -> {
                             CorsConfiguration corsConfiguration=new CorsConfiguration();
-                            corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                            corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                             corsConfiguration.setAllowCredentials(true);
                             corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
                             corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
                             corsConfiguration.setMaxAge(3600L);
                         return corsConfiguration;
                         }))
-                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/api/v1/auth/login","/error","/api/v1/category/getCategories"))
-                        .sessionManagement(scm->scm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(httpSecurityCsrfConfigurer -> {
+                    httpSecurityCsrfConfigurer.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/error",
+                                "/api/v1/category/getCategories",
+                                "/api/v1/product/allProducts**",
+                                "/api/v1/allProducts**",
+                                "/api/v1/product/image/**",
+                                "/api/v1/auth/login",
+                                "/api/v1/order/createOrder",
+                                "/api/v1/auth/getAllUsers",
+                                "/api/v1/product/newArrivals");
+                })
+                .sessionManagement(scm->scm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JWTTokenValidationFilter(environment), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/auth/logout").authenticated()
                         .requestMatchers("/api/v1/auth/register").hasAnyRole("OWNER","MANAGER")
+                        .requestMatchers(HttpMethod.DELETE,"/api/v1/auth/*").hasAnyRole("OWNER","MANAGER")
+                        .requestMatchers("/api/v1/auth/getAllUsers").hasAnyRole("OWNER","MANAGER")
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/v1/category/addCategory").hasAnyRole("OWNER","MANAGER")
+                        .requestMatchers("/api/v1/category/getCategories").permitAll()
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/category/**").hasAnyRole("OWNER","MANAGER")
                         .requestMatchers("/api/v1/product/addProduct").hasAnyRole("OWNER","MANAGER")
-                        .requestMatchers("/api/v1/category/getCategories").permitAll()
+                        .requestMatchers("/api/v1/product/newArrivals").permitAll()
+                        .requestMatchers(HttpMethod.DELETE,"/api/v1/product/**").hasAnyRole("OWNER","MANAGER")
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/product/**").hasAnyRole("OWNER","MANAGER")
+                        .requestMatchers("/api/v1/product/allProducts**").permitAll()
+                        .requestMatchers("/api/v1/allProducts**").permitAll()
+                        .requestMatchers("/api/v1/product/image/**").permitAll()
+                        .requestMatchers("/api/v1/order/createOrder").permitAll()
+
                 )
                 .exceptionHandling(
                         httpSecurityExceptionHandlingConfigurer ->

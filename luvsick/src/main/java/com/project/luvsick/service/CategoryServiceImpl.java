@@ -5,7 +5,9 @@ import com.project.luvsick.dto.CategoryResponseDTO;
 import com.project.luvsick.mapper.CategoryMapper;
 import com.project.luvsick.model.Category;
 import com.project.luvsick.repo.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
     @Override
     public CategoryResponseDTO addCategory(AddCategoryRequestDTO addCategoryRequestDTO) {
+        if (categoryRepository.findByName(addCategoryRequestDTO.getName()).isPresent()){
+            throw new EntityExistsException("Resource already exists");
+        }
         Category category=categoryMapper.toCategory(addCategoryRequestDTO);
          categoryRepository.save(category);
          log.info("new category is created");
@@ -29,6 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(UUID id) {
         Category category= categoryRepository
                 .findById(id)
@@ -42,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories=categoryRepository.findAll();
         return categories.stream().map(categoryMapper::toDto).collect(Collectors.toList());
     }
-
+    //TODO DELETE
     @Override
     public CategoryResponseDTO getCategory(UUID id) {
         Category category=categoryRepository

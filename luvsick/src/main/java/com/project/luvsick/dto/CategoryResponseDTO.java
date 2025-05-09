@@ -15,7 +15,4 @@ import java.util.UUID;
 public class CategoryResponseDTO {
     private UUID id;
     private String name;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private String updatedBy;
 } 

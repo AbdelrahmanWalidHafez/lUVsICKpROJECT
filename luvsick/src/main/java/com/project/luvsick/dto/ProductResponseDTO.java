@@ -1,12 +1,15 @@
 package com.project.luvsick.dto;
 
 import lombok.Builder;
+import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
-public class AddProductResponseDTO {
+@Data
+public class ProductResponseDTO {
     private UUID id;
     private String name;
     private BigDecimal price;
@@ -14,5 +17,5 @@ public class AddProductResponseDTO {
     private CategoryResponseDTO categoryResponseDTO;
     private int discount ;
     private String description;
-
+    private List<ProductSizesResponse>productSizeDTOS;
 }
