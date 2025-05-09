@@ -1,8 +1,8 @@
 package com.project.luvsick.model;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.web.webauthn.api.Bytes;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +12,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name="products")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product extends  BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,5 +52,5 @@ public class Product extends  BaseEntity {
 
     @Lob
     @Column(nullable = false,unique = true)
-    private Byte[] imageData;
+    private byte[] imageData;
 }

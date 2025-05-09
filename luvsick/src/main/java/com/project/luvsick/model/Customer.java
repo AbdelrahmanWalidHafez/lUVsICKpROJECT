@@ -1,9 +1,8 @@
 package com.project.luvsick.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +11,8 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "customers")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

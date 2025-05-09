@@ -6,25 +6,26 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt","createdBy","updatedAt","updatedBy"})
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt", "updatedBy"})
 public class BaseEntity {
     @CreatedDate
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-    private  String createdBy;
+
     @LastModifiedDate
-    @Column(insertable = false)
-    private LocalDateTime updateAt;
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
     @LastModifiedBy
-    @Column(insertable = false)
-    private  String updatedBy;
+    @Column(nullable = false)
+    private String updatedBy;
 }

@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -32,9 +33,10 @@ public class JWTTokenValidationFilter extends OncePerRequestFilter {
         String jwt =  extractJwtFromCookie(request);
         if (null != jwt) {
             try {
-                Environment environment = getEnvironment();
                 String secret=env.getProperty("JWT_SECRET");
-                if (secret==null)log.error("zeby");
+                if (secret == null || secret.length() < 32) {
+                    throw new IllegalStateException("JWT_SECRET is not defined or too short in application.properties (must be at least 32 characters)");
+                }
                 SecretKey secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
                 Claims claims = Jwts
                         .parser()

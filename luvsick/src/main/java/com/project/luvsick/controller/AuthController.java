@@ -4,6 +4,7 @@ import com.project.luvsick.dto.LoginRequestDTO;
 import com.project.luvsick.dto.RegisterUserRequestDTO;
 import com.project.luvsick.dto.UserDTO;
 import com.project.luvsick.mapper.UserMapper;
+import com.project.luvsick.model.Authority;
 import com.project.luvsick.model.User;
 import com.project.luvsick.repo.UserRepository;
 import com.project.luvsick.service.AuthService;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Set;
 
 @RestController
 @Slf4j
@@ -44,7 +47,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterUserRequestDTO registerUserRequestDTO){
         User user=userMapper.toUser(registerUserRequestDTO);
+        Authority authority=new Authority("ROLE_"+registerUserRequestDTO.getAuthorityName());
+        user.setAuthorities(Set.of(authority));
+        authority.setUser(user);
         user=userRepository.save(user);
+        log.info("user:{} is created", user.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(user));
 
     }

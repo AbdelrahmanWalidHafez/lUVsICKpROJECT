@@ -7,19 +7,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "authorities")
-public class Authority{
-        @Id
-        @GeneratedValue(strategy = GenerationType.UUID)
-        private UUID id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class Authority {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-        @Column(nullable = false,unique = true)
-        private String name;
+    @Column(nullable = false)
+    private String name;
 
-        @ManyToOne
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-        @JoinColumn(name = "user_id")
-        private User user;
-        public Authority(String name) {
-            this.name = name;
-        }
+    public Authority(String name) {
+        this.name = name;
+    }
 }

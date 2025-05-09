@@ -1,14 +1,15 @@
 package com.project.luvsick.model;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 import java.util.UUID;
 
 @Getter
 @Setter
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "product_sizes")
 public class ProductSizes {
     @Id

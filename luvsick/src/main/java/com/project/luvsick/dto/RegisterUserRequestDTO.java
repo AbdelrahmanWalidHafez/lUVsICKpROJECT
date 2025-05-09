@@ -25,6 +25,6 @@ public class RegisterUserRequestDTO {
     )
     private String password;
 
-    @Pattern(regexp = "^(OWNER|ADMIN)$", message = "Invalid role. Must be one of: OWNER, ADMIN")
+    @Pattern(regexp = "^(OWNER|ADMIN|MANAGER)$", message = "Invalid role. Must be one of: OWNER, ADMIN Or Manager")
     private String authorityName;
 }
