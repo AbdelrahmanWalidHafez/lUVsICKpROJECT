@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CustomerRepository  extends JpaRepository<Customer, UUID> {
-    @Query("SELECT c.email FROM Customer c")
+    @Query("SELECT DISTINCT c.email FROM Customer c")
     public List<String> findAllEmails();
     @Query("SELECT c.email FROM Customer c")
     public List<String> findAllEmails(String email);
