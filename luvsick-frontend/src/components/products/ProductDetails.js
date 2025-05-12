@@ -230,7 +230,8 @@ const ProductDetails = () => {
       discount: discountValue,
       size: selectedSize,
       sizeId: selectedSizeObj?.id,
-      quantity
+      quantity,
+      stock: selectedSizeObj?.quantity
     });
     // Optionally show a toast or redirect to cart
   };
@@ -284,7 +285,17 @@ const ProductDetails = () => {
         <div style={{ color: '#888', fontSize: '1rem', marginBottom: 8 }}>
           In stock: {maxStock === null ? 'Unknown' : maxStock === 0 ? 'Out of stock' : maxStock}
         </div>
-        <AddToCartButton onClick={handleAddToCart}>Add to Cart</AddToCartButton>
+        
+        <AddToCartButton 
+          onClick={handleAddToCart} 
+          disabled={!selectedSize || maxStock === 0}
+          style={{ 
+            background: (!selectedSize || maxStock === 0) ? '#ccc' : '#111',
+            cursor: (!selectedSize || maxStock === 0) ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {!selectedSize ? 'Select a size' : maxStock === 0 ? 'Out of stock' : 'Add to Cart'}
+        </AddToCartButton>
         <Divider />
         <Description>
           <span style={{ fontWeight: 600, display: 'block', marginBottom: 8 }}>Description</span>

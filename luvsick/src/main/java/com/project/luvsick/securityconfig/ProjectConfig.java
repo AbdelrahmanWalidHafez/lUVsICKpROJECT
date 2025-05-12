@@ -44,24 +44,22 @@ public class ProjectConfig {
                             corsConfiguration.setMaxAge(3600L);
                         return corsConfiguration;
                         }))
-                .csrf(httpSecurityCsrfConfigurer -> {
-                    httpSecurityCsrfConfigurer
-                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers(
-                            "/error",
-                            "/api/v1/category/getCategories",
-                            "/api/v1/product/allProducts**",
-                            "/api/v1/allProducts**",
-                            "/api/v1/product/image/**",
-                            "/api/v1/auth/login",
-                            "/api/v1/order/createOrder",
-                            "/api/v1/auth/getAllUsers",
-                            "/api/v1/product/newArrivals",
-                            "/api/v1/order/getOrders**",
-                            "/api/v1/order/**"
-                        );
-                })
+                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer
+                    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .ignoringRequestMatchers(
+                        "/error",
+                        "/api/v1/category/getCategories",
+                        "/api/v1/product/allProducts**",
+                        "/api/v1/allProducts**",
+                        "/api/v1/product/image/**",
+                        "/api/v1/auth/login",
+                        "/api/v1/order/createOrder",
+                        "/api/v1/auth/getAllUsers",
+                        "/api/v1/product/newArrivals",
+                        "/api/v1/order/getOrders**",
+                        "/api/v1/order/**"
+                    ))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JWTTokenValidationFilter(environment), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class)

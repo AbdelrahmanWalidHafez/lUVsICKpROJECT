@@ -1,8 +1,6 @@
 package com.project.luvsick.model;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.web.webauthn.api.Bytes;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;

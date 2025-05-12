@@ -45,7 +45,7 @@ public class CustomerDTO {
 
     @NotBlank(message = "Phone number is required")
     @Pattern(
-        regexp = "^(01)[0-2,5]{1}[0-9]{8}$",
+        regexp = "^(01)[0-2,5][0-9]{8}$",
         message = "Invalid Egyptian phone number. Must start with 01 followed by 0,1,2, or 5 and then 8 digits"
     )
     private String phoneNumber;

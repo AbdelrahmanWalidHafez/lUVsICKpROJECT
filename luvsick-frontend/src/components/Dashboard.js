@@ -81,6 +81,28 @@ const MainContent = styled.main`
   overflow-y: auto;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+const ActionButton = styled.button`
+  width: 100%;
+  background: ${props => props.variant === 'home' ? '#4b4bff' : '#ff4b4b'};
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover { 
+    background: ${props => props.variant === 'home' ? '#3b3bff' : '#d32f2f'};
+  }
+`;
+
 const Dashboard = () => {
   const navigate = useNavigate();
 
@@ -91,7 +113,9 @@ const Dashboard = () => {
       localStorage.clear();
       navigate('/login', { replace: true });
     } catch (err) {
-      alert('Logout failed. Please try again.');
+      // Silently handle logout error
+      localStorage.clear();
+      navigate('/login', { replace: true });
     }
   };
 
@@ -137,9 +161,10 @@ const Dashboard = () => {
             </MenuLink>
           </MenuItem>
         </MenuList>
-        <button style={{marginTop: '2rem', width: '100%', background: '#ff4b4b', color: 'white', border: 'none', borderRadius: '8px', padding: '1rem', fontWeight: 600, cursor: 'pointer'}} onClick={handleLogout}>
-          Logout
-        </button>
+        <ButtonContainer>
+          <ActionButton onClick={handleLogout}>Logout</ActionButton>
+          <ActionButton variant="home" onClick={() => navigate('/')}>Return Home</ActionButton>
+        </ButtonContainer>
       </Sidebar>
       <MainContent>
         <Outlet />

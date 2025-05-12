@@ -1,4 +1,4 @@
-package com.project.luvsick.service;
+package com.project.luvsick.service.impl;
 import com.project.luvsick.dto.ProductDTO;
 import com.project.luvsick.dto.ProductResponseDTO;
 import com.project.luvsick.mapper.ProductMapper;
@@ -8,7 +8,8 @@ import com.project.luvsick.model.Product;
 import com.project.luvsick.model.ProductSizes;
 import com.project.luvsick.repo.CategoryRepository;
 import com.project.luvsick.repo.ProductRepository;
-import com.project.luvsick.repo.ProductSizesRepository;
+import com.project.luvsick.service.EmailService;
+import com.project.luvsick.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,12 +29,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class productServiceImpl implements ProductService{
+public class productServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final ProductSizesMapper productSizesMapper;
-    private final ProductSizesRepository productSizesRepository;
     private final EmailService emailService;
     @Override
     @Transactional
@@ -88,14 +86,11 @@ public class productServiceImpl implements ProductService{
                 }
             });
         }
-        
-        // Handle image update if provided
         if (multipartFile != null && !multipartFile.isEmpty()) {
             product.setImageType(multipartFile.getContentType());
             product.setImageData(multipartFile.getBytes());
             product.setImageName(multipartFile.getOriginalFilename());
         }
-        
         Product savedProduct = productRepository.save(product);
         log.info("Product: {} is updated", product.getName());
         return productMapper.toDTO(savedProduct);

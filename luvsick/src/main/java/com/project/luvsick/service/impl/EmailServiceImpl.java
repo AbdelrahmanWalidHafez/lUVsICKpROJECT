@@ -1,7 +1,8 @@
-package com.project.luvsick.service;
+package com.project.luvsick.service.impl;
 
 import com.project.luvsick.model.OrderStatus;
 import com.project.luvsick.repo.CustomerRepository;
+import com.project.luvsick.service.EmailService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,19 +19,20 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EmailServiceImpl implements EmailService{
+public class EmailServiceImpl implements EmailService {
     private final JavaMailSender javaMailSender;
     private final CustomerRepository customerRepository;
 
     @Override
+    @Async
     public void sendNewArrivalEmail(UUID id) {
-        List<String> to =customerRepository.findAllEmails(); ;
+        List<String> to =customerRepository.findAllEmails();
         String subject = "new Arrival";
-        String body = "<html><body>"
-                + "<p>Hello, check our new product</p>"
-                + "<p>Click <a href='http://localhost:8080/api/v1/"+id+"'>here</a> to visit our website.</p>"
-                + "<p>Regards,<br>luvsick</p>"
-                + "</body></html>";
+        String body =
+                 "Hello, check our new product"
+                + "Click <a href='http://localhost:8080/api/v1/"+id+"'>here</a> to visit our website."
+                + "Regards," +
+                         "luvsick";
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
@@ -37,7 +40,7 @@ public class EmailServiceImpl implements EmailService{
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject(subject);
             helper.setText(body, true);
-            helper.setFrom("walidlrahmn5@gmail.com");
+            helper.setFrom("andelrahman.walid.804@gmail.com");
             for (String email:to) {
                 helper.setTo(email);
                 javaMailSender.send(message);
@@ -45,34 +48,32 @@ public class EmailServiceImpl implements EmailService{
             javaMailSender.send(message);
             log.info("the emails has been sent");
 
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (MailException e) {
-            e.printStackTrace();
+        } catch (MessagingException | MailException e) {
+            log.error(e.getMessage());
         }
     }
     @Override
+    @Async
     public void sendOrderReceivedEmail(String email) {
 
-        String subject = "We Have Recieved your Order";
-        String body = "<html><body>"
-                + "<p>Hello, we will notify you on any updates on the order</p>"
-                + "<p>Regards,<br>luvsick</p>"
-                + "</body></html>";
+        String subject = "We Have Received your Order";
+        String body = """
+                Hello, we will notify you on any updates on the order
+                Regards,
+                luvsick""";
 
        sendMessage(email,body,subject);
     }
+    @Async
     @Override
     public void sendNewOrderStatusEmail(String email, OrderStatus orderStatus) {
         String subject = "new Updates on your order";
-        String body = "<html><body>"
-                + "<p>Hello, your order is "+orderStatus+"</p>"
-                + "<p>Regards,<br>luvsick</p>"
-                + "</body></html>";
+        String body =
+                "Hello, your order is "+orderStatus+"\n"
+                + "Regards,\nluvsick";
         sendMessage(email,body,subject);
     }
     private void  sendMessage(String email,String subject,String body){
-        List<String> to =customerRepository.findAllEmails(email);
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -84,10 +85,8 @@ public class EmailServiceImpl implements EmailService{
             javaMailSender.send(message);
             log.info("the email has been sent");
 
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (MailException e) {
-            e.printStackTrace();
+        } catch (MessagingException | MailException e) {
+            log.error(e.getMessage());
         }
 
     }

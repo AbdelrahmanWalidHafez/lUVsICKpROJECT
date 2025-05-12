@@ -117,18 +117,7 @@ const QuantityButton = styled.button`
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
-  const { products } = useProducts();
   const navigate = useNavigate();
-
-  // Helper to get max stock for a cart item
-  const getMaxStock = (item) => {
-    const product = products.find(p => p.id === item.productId);
-    if (!product || !product.productSizeDTOS) return null;
-    const sizeObj = product.productSizeDTOS.find(
-      s => (s.size || s.name)?.toLowerCase() === item.size?.toLowerCase()
-    );
-    return sizeObj ? sizeObj.quantity : null;
-  };
 
   const getTotal = () =>
     cart.reduce(
@@ -187,7 +176,7 @@ const Cart = () => {
       ) : (
         <>
           {cart.map(item => {
-            const maxStock = getMaxStock(item);
+            const maxStock = item.stock;
             return (
               <CartItem key={item.productId + '-' + item.size}>
                 <ProductImage src={`http://localhost:8080${item.image}`} alt={item.name} />
@@ -200,17 +189,17 @@ const Cart = () => {
                     <QuantityControls>
                       <QuantityButton
                         onClick={() => updateQuantity(item.productId, item.size, item.quantity - 1)}
-                        disabled={item.quantity <= 1 || maxStock === null}
+                        disabled={item.quantity <= 1 || maxStock === undefined}
                       >-</QuantityButton>
                       <span>{item.quantity}</span>
                       <QuantityButton
                         onClick={() => updateQuantity(item.productId, item.size, item.quantity + 1)}
-                        disabled={maxStock === null || item.quantity >= maxStock}
+                        disabled={maxStock === undefined || item.quantity >= maxStock}
                       >+</QuantityButton>
                     </QuantityControls>
                   )}
                   <Detail style={{ color: '#888', fontSize: '0.95rem' }}>
-                    In stock: {maxStock === null ? 'Unknown' : maxStock === 0 ? 'Out of stock' : maxStock}
+                    In stock: {maxStock === undefined ? 'Unknown' : maxStock === 0 ? 'Out of stock' : maxStock}
                   </Detail>
                   <RemoveButton onClick={() => removeFromCart(item.productId, item.size)}>
                     Remove

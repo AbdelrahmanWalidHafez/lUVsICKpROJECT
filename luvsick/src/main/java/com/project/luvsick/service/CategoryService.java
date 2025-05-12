@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    public CategoryResponseDTO addCategory(AddCategoryRequestDTO addCategoryRequestDTO);
-    public void deleteCategory(UUID id);
+     CategoryResponseDTO addCategory(AddCategoryRequestDTO addCategoryRequestDTO);
+     void deleteCategory(UUID id);
+     List <CategoryResponseDTO> getCategories();
 
-   public List <CategoryResponseDTO> getCategories();
-
-    public CategoryResponseDTO getCategory(UUID id);
 }

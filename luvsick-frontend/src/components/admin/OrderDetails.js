@@ -58,7 +58,7 @@ const Td = styled.td`
 `;
 
 const ALL_STATUSES = ["SHIPPED", "CONFIRMED", "CANCELLED", "RECEIVED"];
-const UPDATABLE_STATUSES = ["SHIPPED", "CONFIRMED", "CANCELLED"];
+const UPDATABLE_STATUSES = ["SHIPPED", "CONFIRMED", "CANCELLED", "RECEIVED"];
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -110,20 +110,14 @@ const OrderDetails = () => {
           {!order.customerDTO?.city && !order.customerDTO?.street && !order.customerDTO?.buildingNumber && order.customerDTO?.flatNumber == null && 'N/A'}
         </Value><br />
         <Label>Status: </Label>
-        {order.orderStatus === 'RECEIVED' ? (
-          <Value>RECEIVED</Value>
-        ) : (
-          <>
-            <StatusSelect value={newStatus} onChange={e => setNewStatus(e.target.value)}>
-              {UPDATABLE_STATUSES.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </StatusSelect>
-            <UpdateButton onClick={handleUpdateStatus} disabled={updating || newStatus === order.orderStatus}>
-              {updating ? 'Updating...' : 'Update Status'}
-            </UpdateButton>
-          </>
-        )}
+        <StatusSelect value={newStatus} onChange={e => setNewStatus(e.target.value)}>
+          {UPDATABLE_STATUSES.map(status => (
+            <option key={status} value={status}>{status}</option>
+          ))}
+        </StatusSelect>
+        <UpdateButton onClick={handleUpdateStatus} disabled={updating || newStatus === order.orderStatus}>
+          {updating ? 'Updating...' : 'Update Status'}
+        </UpdateButton>
       </Section>
       <Section>
         <Label>Total Price: </Label><Value>{order.totalPrice}</Value><br />

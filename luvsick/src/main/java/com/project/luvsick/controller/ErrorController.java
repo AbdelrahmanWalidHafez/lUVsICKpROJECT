@@ -1,9 +1,7 @@
 package com.project.luvsick.controller;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.project.luvsick.dto.ApiErrorResponse;
-
 import com.project.luvsick.exception.InsufficientStockException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
@@ -20,9 +17,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -304,8 +299,8 @@ public class ErrorController {
         log.error("Invalid data access API usage: {}", ex.getMessage());
         
         String message = "Invalid data access operation";
-        String detailedMessage = ex.getMostSpecificCause() != null ? 
-            ex.getMostSpecificCause().getMessage() : ex.getMessage();
+        ex.getMostSpecificCause();
+        String detailedMessage = ex.getMostSpecificCause().getMessage();
         
         ApiErrorResponse error = ApiErrorResponse
                 .builder()

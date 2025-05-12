@@ -1,6 +1,6 @@
-package com.project.luvsick.service;
+package com.project.luvsick.service.impl;
 
-import com.project.luvsick.repo.UserRepository;
+import com.project.luvsick.service.AuthService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -12,21 +12,17 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     private final AuthenticationManager authenticationManager;
     private final Environment env;
-    private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
     @Override
     public String authenticate(String email, String password) {
         Authentication authentication= UsernamePasswordAuthenticationToken.unauthenticated(email,password);

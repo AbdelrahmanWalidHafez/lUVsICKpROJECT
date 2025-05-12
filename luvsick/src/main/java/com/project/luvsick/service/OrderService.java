@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface OrderService {
-    public Order createNewOrder(OrderDTO orderDTO) ;
+     Order createNewOrder(OrderDTO orderDTO) ;
 
-    public List<OrderResponseDTO> getOrders(OrderStatus orderStatus, int pageNum, String sortDir, String sortField);
+     List<OrderResponseDTO> getOrders(OrderStatus orderStatus, int pageNum, String sortDir, String sortField);
 
-    public void updateStatus(UUID id, OrderStatus orderStatus);
+     void updateStatus(UUID id, OrderStatus orderStatus);
 }

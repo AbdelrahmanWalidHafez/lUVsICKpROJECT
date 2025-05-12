@@ -1,6 +1,5 @@
 package com.project.luvsick.dto;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+
 import lombok.Builder;
 import lombok.Data;
 import java.util.UUID;

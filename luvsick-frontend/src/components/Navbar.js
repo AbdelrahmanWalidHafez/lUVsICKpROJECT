@@ -50,6 +50,12 @@ const HeartLogo = styled(FaHeart)`
   margin: 0 0.5rem;
 `;
 
+const getNavColor = (isHome, scrolled) => {
+  if (!isHome) return '#fff';
+  if (scrolled) return '#111';
+  return '#fff';
+};
+
 const MenuLink = styled(NavLink)`
   text-decoration: none;
   font-size: 1.1rem;
@@ -57,7 +63,7 @@ const MenuLink = styled(NavLink)`
   padding: 0.5rem 0.8rem;
   border-radius: 6px;
   transition: color 0.3s, background 0.2s;
-  color: ${({ isHome, scrolled }) => (isHome ? (scrolled ? '#111' : '#fff') : '#fff')};
+  color: ${({ isHome, scrolled }) => getNavColor(isHome, scrolled)};
   &.active {
     background: #ff4b4b;
     color: #fff !important;
@@ -74,7 +80,7 @@ const DropdownParent = styled.div`
 `;
 
 const DropdownButton = styled.div`
-  color: ${({ scrolled }) => (scrolled ? '#111' : '#fff')};
+  color: ${({ isHome, scrolled }) => getNavColor(isHome, scrolled)};
   font-size: 1.1rem;
   font-weight: 600;
   padding: 0.5rem 0.8rem;
@@ -127,7 +133,7 @@ const Icons = styled.div`
 const IconButton = styled.button`
   background: none;
   border: none;
-  color: ${({ scrolled }) => (scrolled ? '#111' : '#fff')};
+  color: ${({ isHome, scrolled }) => getNavColor(isHome, scrolled)};
   font-size: 1.5rem;
   cursor: pointer;
   transition: color 0.3s;
@@ -231,7 +237,7 @@ const Navbar = () => {
             onMouseEnter={handleDropdownEnter}
             onMouseLeave={handleDropdownLeave}
           >
-            <DropdownButton scrolled={scrolled}>
+            <DropdownButton isHome={isHome} scrolled={scrolled}>
               Categories <span style={{fontSize:'0.8em'}}>&#9662;</span>
             </DropdownButton>
             <DropdownMenu open={categoriesOpen}>
@@ -250,13 +256,14 @@ const Navbar = () => {
         </CenterLogo>
         {/* Right Section (Icons) */}
         <Icons>
-          <IconButton title="Login" onClick={() => navigate('/login')} scrolled={scrolled}>
+          <IconButton title="Login" onClick={() => navigate('/login')} isHome={isHome} scrolled={scrolled}>
             <FaUser />
           </IconButton>
           <Link to="/cart">
             <CartIconContainer>
               <IconButton
                 title="Cart"
+                isHome={isHome}
                 scrolled={scrolled}
                 className={cartBump ? 'cart-bump' : ''}
                 style={{ position: 'relative' }}

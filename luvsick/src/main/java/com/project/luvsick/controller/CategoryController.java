@@ -31,8 +31,4 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponseDTO>> getCategories(){
        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategories());
     }
-    @GetMapping(path = {"/id"})
-    public ResponseEntity<CategoryResponseDTO> getCategory(@PathVariable UUID id){
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.getCategory(id));
-    }
 }

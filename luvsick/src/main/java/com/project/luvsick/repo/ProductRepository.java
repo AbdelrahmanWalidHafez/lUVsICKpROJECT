@@ -10,6 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductRepository  extends JpaRepository<Product, UUID> {
-    Page<Product> findAllByCategory(Category category, Pageable pageable);
-    List<Product> findTop5ByOrderByCreatedAtDesc();
+   public Page<Product> findAllByCategory(Category category, Pageable pageable);
+   public List<Product> findTop5ByOrderByCreatedAtDesc();
 }

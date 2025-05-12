@@ -130,6 +130,43 @@ const SuccessMsg = styled.div`
   margin-bottom: 1rem;
 `;
 
+const PhoneInputWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+const PhonePrefix = styled.span`
+  background: #f8f9fa;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  color: #222;
+  border-right: 2px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const PhoneInput = styled.input`
+  border: none;
+  outline: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  flex: 1;
+  background: transparent;
+`;
+
+// Replace the list of governorates with English-only names
+const EGYPTIAN_GOVERNORATES = [
+  'Cairo', 'Giza', 'Alexandria', 'Dakahlia', 'Red Sea', 'Beheira', 'Fayoum', 'Gharbia',
+  'Ismailia', 'Menofia', 'Minya', 'Qaliubiya', 'New Valley', 'Suez', 'Aswan', 'Assiut',
+  'Beni Suef', 'Port Said', 'Damietta', 'Sharkia', 'South Sinai', 'Kafr El Sheikh',
+  'Matrouh', 'Luxor', 'Qena', 'North Sinai', 'Sohag'
+];
+
 const Checkout = () => {
   const { cart, clearCart } = useCart();
   const navigate = useNavigate();
@@ -159,6 +196,8 @@ const Checkout = () => {
     setError('');
     setSuccess('');
     setLoading(true);
+    // Add 0 prefix to phone number for validation and sending
+    const phoneWithZero = '0' + form.phoneNumber;
     // Basic validation
     for (const key in form) {
       if (!form[key]) {
@@ -167,7 +206,7 @@ const Checkout = () => {
         return;
       }
     }
-    if (!/^01[0-2,5]{1}[0-9]{8}$/.test(form.phoneNumber)) {
+    if (!/^01[0-2,5]{1}[0-9]{8}$/.test(phoneWithZero)) {
       setError('Invalid Egyptian phone number.');
       setLoading(false);
       return;
@@ -188,6 +227,7 @@ const Checkout = () => {
     });
     // Remove 'id' if present in form
     const { id, ...customerDTO } = form;
+    customerDTO.phoneNumber = phoneWithZero;
     const orderDTO = {
       customerDTO,
       productUUIDS,
@@ -241,8 +281,26 @@ const Checkout = () => {
           <Input name="name" value={form.name} onChange={handleChange} required />
         </FormGroup>
         <FormGroup>
-          <Label>City</Label>
-          <Input name="city" value={form.city} onChange={handleChange} required />
+          <Label>Governorate</Label>
+          <select
+            name="city"
+            value={form.city}
+            onChange={handleChange}
+            required
+            style={{
+              padding: '0.8rem',
+              border: '2px solid #eee',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              background: '#fff',
+              color: '#333'
+            }}
+          >
+            <option value="" disabled>Select a governorate</option>
+            {EGYPTIAN_GOVERNORATES.map(gov => (
+              <option key={gov} value={gov}>{gov}</option>
+            ))}
+          </select>
         </FormGroup>
         <FormGroup>
           <Label>Street</Label>
@@ -258,7 +316,25 @@ const Checkout = () => {
         </FormGroup>
         <FormGroup>
           <Label>Phone Number</Label>
-          <Input name="phoneNumber" value={form.phoneNumber} onChange={handleChange} required />
+          <PhoneInputWrapper>
+            <PhonePrefix>
+              <img
+                src="/OIP (4).jpeg"
+                alt="Egypt"
+                style={{ width: 22, height: 16, marginRight: 6, verticalAlign: 'middle', borderRadius: 2 }}
+              />
+              +20
+            </PhonePrefix>
+            <PhoneInput
+              name="phoneNumber"
+              value={form.phoneNumber}
+              onChange={handleChange}
+              required
+              maxLength={10}
+              pattern="[0-9]{10}"
+              placeholder="1XXXXXXXXX"
+            />
+          </PhoneInputWrapper>
         </FormGroup>
         <SubmitButton type="submit" disabled={loading}>{loading ? 'Placing Order...' : 'Confirm Order'}</SubmitButton>
       </Form>
