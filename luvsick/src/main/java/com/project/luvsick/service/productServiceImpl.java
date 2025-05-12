@@ -50,7 +50,7 @@ public class productServiceImpl implements ProductService{
             product.setImageData(multipartFile.getBytes());
             productRepository.save(product);
             log.info("new product added");
-           // emailService.sendNewArrivalEmail(product.getId());
+           emailService.sendNewArrivalEmail(product.getId());
             return productMapper.toDTO(product);
     }
 
@@ -104,7 +104,7 @@ public class productServiceImpl implements ProductService{
     @Override
     @Transactional
     public List<ProductResponseDTO> getAllProducts(String categoryName,int pageNum, String sortDir, String sortField) {
-        int pageSize = 5;
+        int pageSize = 10;
         Pageable pageable = PageRequest.of
                 (pageNum - 1
                         , pageSize

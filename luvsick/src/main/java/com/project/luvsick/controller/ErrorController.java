@@ -3,13 +3,17 @@ package com.project.luvsick.controller;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.project.luvsick.dto.ApiErrorResponse;
+
 import com.project.luvsick.exception.InsufficientStockException;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,10 +28,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -243,5 +250,84 @@ public class ErrorController {
                 .build();
         
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(
+            ConstraintViolationException ex,
+            HttpServletRequest request) {
+        log.error("Constraint violation", ex);
+
+        List<String> errors = ex.getConstraintViolations()
+                .stream()
+                .map(violation -> {
+                    String field = violation.getPropertyPath().toString();
+                    String message = violation.getMessage();
+                    return field + ": " + message;
+                })
+                .collect(Collectors.toList());
+
+        ApiErrorResponse error = ApiErrorResponse
+                .builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .errors(errors)
+                .path(request.getRequestURI())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiErrorResponse> handleValidationException(
+            ValidationException ex,
+            HttpServletRequest request) {
+
+        log.error("Validation exception: ", ex);
+
+        ApiErrorResponse error = ApiErrorResponse
+                .builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message("Validation failed")
+                .errors(Collections.singletonList(ex.getMessage()))
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(error);
+    }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidDataAccessApiUsageException(
+            InvalidDataAccessApiUsageException ex,
+            HttpServletRequest request) {
+        log.error("Invalid data access API usage: {}", ex.getMessage());
+        
+        String message = "Invalid data access operation";
+        String detailedMessage = ex.getMostSpecificCause() != null ? 
+            ex.getMostSpecificCause().getMessage() : ex.getMessage();
+        
+        ApiErrorResponse error = ApiErrorResponse
+                .builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(message)
+                .errors(Collections.singletonList(detailedMessage))
+                .path(request.getRequestURI())
+                .build();
+        
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleNoResourceFoundException(NoResourceFoundException ex, HttpServletRequest request) {
+        log.error("Resource not found: {}", ex.getMessage());
+        ApiErrorResponse error = ApiErrorResponse
+                .builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message("Resource not found")
+                .errors(Collections.singletonList(ex.getMessage()))
+                .path(request.getRequestURI())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 }

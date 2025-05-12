@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,4 +19,5 @@ public class OrderResponseDTO {
     private BigDecimal totalPrice;
     private OrderStatus orderStatus;
     private Map<UUID,Integer>itemPerQuantity;
+    private LocalDateTime createdAt;
 }

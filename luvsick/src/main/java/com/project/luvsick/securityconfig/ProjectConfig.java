@@ -45,19 +45,24 @@ public class ProjectConfig {
                         return corsConfiguration;
                         }))
                 .csrf(httpSecurityCsrfConfigurer -> {
-                    httpSecurityCsrfConfigurer.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-                            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .ignoringRequestMatchers("/error",
-                                "/api/v1/category/getCategories",
-                                "/api/v1/product/allProducts**",
-                                "/api/v1/allProducts**",
-                                "/api/v1/product/image/**",
-                                "/api/v1/auth/login",
-                                "/api/v1/order/createOrder",
-                                "/api/v1/auth/getAllUsers",
-                                "/api/v1/product/newArrivals");
+                    httpSecurityCsrfConfigurer
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers(
+                            "/error",
+                            "/api/v1/category/getCategories",
+                            "/api/v1/product/allProducts**",
+                            "/api/v1/allProducts**",
+                            "/api/v1/product/image/**",
+                            "/api/v1/auth/login",
+                            "/api/v1/order/createOrder",
+                            "/api/v1/auth/getAllUsers",
+                            "/api/v1/product/newArrivals",
+                            "/api/v1/order/getOrders**",
+                            "/api/v1/order/**"
+                        );
                 })
-                .sessionManagement(scm->scm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JWTTokenValidationFilter(environment), UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(new CsrfCookieFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
@@ -78,11 +83,12 @@ public class ProjectConfig {
                         .requestMatchers("/api/v1/allProducts**").permitAll()
                         .requestMatchers("/api/v1/product/image/**").permitAll()
                         .requestMatchers("/api/v1/order/createOrder").permitAll()
-
+                        .requestMatchers("/api/v1/order/getOrders**").permitAll()
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/order/**").permitAll()
                 )
                 .exceptionHandling(
                         httpSecurityExceptionHandlingConfigurer ->
-                        httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler()))    ;
+                        httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler()));
         return httpSecurity.build();
     }
     @Bean

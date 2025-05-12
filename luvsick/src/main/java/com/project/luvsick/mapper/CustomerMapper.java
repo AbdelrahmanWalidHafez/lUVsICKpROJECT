@@ -26,6 +26,7 @@ public class CustomerMapper {
                 .email(customer.getEmail())
                 .city(customer.getCity())
                 .buildingNumber(customer.getBuildingNumber())
+                .flatNumber(customer.getFlatNumber())
                 .name(customer.getName())
                 .street(customer.getStreet())
                 .phoneNumber(customer.getPhoneNumber())

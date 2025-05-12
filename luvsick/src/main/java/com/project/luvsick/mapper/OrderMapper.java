@@ -21,6 +21,7 @@ public class OrderMapper {
                 .id(order.getId())
                 .itemPerQuantity(order.getItemPerQuantity())
                 .productResponseDTOS(order.getProducts().stream().map(productMapper::toDTO).collect(Collectors.toList()))
+                .createdAt(order.getCreatedAt())
                 .build();
     }
 }

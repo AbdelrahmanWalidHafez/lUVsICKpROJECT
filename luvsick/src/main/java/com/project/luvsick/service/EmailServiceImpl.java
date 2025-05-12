@@ -1,12 +1,12 @@
 package com.project.luvsick.service;
 
+import com.project.luvsick.model.OrderStatus;
 import com.project.luvsick.repo.CustomerRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -51,23 +51,34 @@ public class EmailServiceImpl implements EmailService{
             e.printStackTrace();
         }
     }
-
     @Override
-    public void sendOrderRecievcedEmail(String email) {
-        List<String> to =customerRepository.findAllEmails(); ;
+    public void sendOrderReceivedEmail(String email) {
+
         String subject = "We Have Recieved your Order";
         String body = "<html><body>"
                 + "<p>Hello, we will notify you on any updates on the order</p>"
                 + "<p>Regards,<br>luvsick</p>"
                 + "</body></html>";
 
+       sendMessage(email,body,subject);
+    }
+    @Override
+    public void sendNewOrderStatusEmail(String email, OrderStatus orderStatus) {
+        String subject = "new Updates on your order";
+        String body = "<html><body>"
+                + "<p>Hello, your order is "+orderStatus+"</p>"
+                + "<p>Regards,<br>luvsick</p>"
+                + "</body></html>";
+        sendMessage(email,body,subject);
+    }
+    private void  sendMessage(String email,String subject,String body){
+        List<String> to =customerRepository.findAllEmails(email);
         MimeMessage message = javaMailSender.createMimeMessage();
-
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject(subject);
             helper.setText(body, true);
-            helper.setFrom("walidlrahmn5@gmail.com");
+            helper.setFrom("andelrahman.walid.804@gmail.com");
             helper.setTo(email);
             javaMailSender.send(message);
             javaMailSender.send(message);
@@ -78,5 +89,6 @@ public class EmailServiceImpl implements EmailService{
         } catch (MailException e) {
             e.printStackTrace();
         }
+
     }
 }

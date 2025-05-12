@@ -1,6 +1,7 @@
 package com.project.luvsick.service;
 import com.project.luvsick.dto.OrderDTO;
 
+import com.project.luvsick.dto.OrderResponseDTO;
 import com.project.luvsick.exception.InsufficientStockException;
 import com.project.luvsick.mapper.CustomerMapper;
 import com.project.luvsick.mapper.OrderMapper;
@@ -12,9 +13,14 @@ import com.project.luvsick.repo.ProductSizesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -68,7 +74,42 @@ public class OrderServiceImpl implements OrderService{
                      .totalPrice(totalPrice[0])
                      .itemPerQuantity(itemPerOrderQuantity)
                      .build();
-             emailService.sendOrderRecievcedEmail(customer.getEmail());
+             emailService.sendOrderReceivedEmail(customer.getEmail());
         return orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public List<OrderResponseDTO> getOrders(OrderStatus orderStatus, int pageNum, String sortDir, String sortField) {
+        int pageSize=10;
+        Pageable pageable= PageRequest.of(
+                pageNum-1,pageSize,sortDir.
+                        equalsIgnoreCase("asc")? Sort.by(sortField)
+                        .ascending():Sort.by(sortField)
+                        .descending());
+        Page<Order>order;
+        if (orderStatus==null) {
+            order=orderRepository.findAll(pageable);
+            return order
+                    .getContent()
+                    .stream()
+                    .map(orderMapper::toDto)
+                    .collect(Collectors.toList());
+        }
+        order=orderRepository.findAllByStatus(orderStatus,pageable);
+        return order
+                .getContent()
+                .stream()
+                .map(orderMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateStatus(UUID id, OrderStatus orderStatus) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("no order found with id " + id));
+        order.setStatus(orderStatus);
+        orderRepository.save(order);
+        emailService.sendNewOrderStatusEmail(order.getCustomer().getEmail(),orderStatus);
     }
 }

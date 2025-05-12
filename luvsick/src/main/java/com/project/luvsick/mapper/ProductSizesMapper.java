@@ -17,6 +17,7 @@ public class ProductSizesMapper {
     public ProductSizesResponse toDto(ProductSizes productSizes){
         return ProductSizesResponse
                 .builder()
+                .id(productSizes.getId())
                 .size(productSizes.getSize())
                 .quantity(productSizes.getQuantity())
                 .build();
