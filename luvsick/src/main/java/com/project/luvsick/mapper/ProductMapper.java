@@ -7,11 +7,23 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+/**
+ * @author Abdelrahman Walid Hafez
+ */
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
     private final CategoryMapper categoryMapper;
     private final ProductSizesMapper productSizesMapper;
+    /**
+     * Converts a {@link ProductDTO} to a {@link Product} entity.
+     * <p>
+     * Maps the basic fields and also converts and associates product sizes
+     *  to the {@link com.project.luvsick.model.ProductSizes} entities.
+     *
+     * @param productDTO the data transfer object containing product data
+     * @return the {@link Product} entity built from the DTO, including sizes properly linked
+     */
     public Product toProduct(ProductDTO productDTO){
         Product product = Product
                 .builder()
@@ -33,7 +45,14 @@ public class ProductMapper {
 
         return product;
     }
-
+    /**
+     * Converts a {@link Product} entity to a {@link ProductResponseDTO}.
+     * <p>
+     * Maps product details, category information, and sizes to their respective DTOs.
+     *
+     * @param product the product entity to convert
+     * @return a {@link ProductResponseDTO} representing the product and its details
+     */
     public ProductResponseDTO toDTO(Product product) {
         return ProductResponseDTO
                 .builder()

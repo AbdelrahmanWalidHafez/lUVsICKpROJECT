@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
                      .itemPerQuantity(itemPerOrderQuantity)
                      .build();
              log.info("order is created");
-       emailService.sendOrderReceivedEmail(customer.getEmail());
+       emailService.sendOrderReceivedEmail(customer.getEmail(),order);
         return orderRepository.save(order);
     }
 
@@ -94,17 +94,48 @@ public class OrderServiceImpl implements OrderService {
         log.info("order updated");
         emailService.sendNewOrderStatusEmail(order.getCustomer().getEmail(),orderStatus);
     }
+    /**
+     * Retrieves an existing Customer by email or creates a new one from the given CustomerDTO.
+     * <p>
+     * If a customer with the provided email exists, it is returned.
+     * Otherwise, a new Customer entity is created from the DTO and saved to the repository.
+     * </p>
+     *
+     * @param customerDTO the data transfer object containing customer information
+     * @return the existing or newly saved Customer entity
+     */
     private Customer handleCustomer(CustomerDTO customerDTO){
         Customer customer = customerRepository
                 .findByEmail(customerDTO.getEmail())
                 .orElseGet(() -> customerMapper.toCustomer(customerDTO));
         return customerRepository.save(customer);
     }
+    /**
+     * Fetches a list of products by their UUIDs.
+     *
+     * @param productUUIDS the list of product UUIDs to fetch
+     * @return a list of Product entities corresponding to the given UUIDs
+     */
     private List<Product> fetchProducts(List<UUID> productUUIDS){
         return productRepository.findAllById(productUUIDS);
     }
+    /**
+     * Processes product sizes for an order, updating stock quantities and calculating the total price.
+     * <p>
+     * This method verifies if the requested quantities are available in stock,
+     * updates the stock quantities accordingly, and accumulates the total price of the order.
+     * The updated product sizes are saved to the repository within a transactional context.
+     * </p>
+     *
+     * @param productSizesUUIDS a map of ProductSizes UUIDs to requested quantities
+     * @param itemPerOrderQuantity a map that will be populated with product size UUIDs and their ordered quantities
+     * @param productSizesList a list to accumulate ProductSizes entities with updated quantities
+     * @return the total price for all requested product sizes and quantities
+     * @throws EntityNotFoundException if a ProductSizes entity cannot be found for a given UUID
+     * @throws InsufficientStockException if the requested quantity exceeds available stock
+     */
     @Transactional
-    protected BigDecimal processProductSizes(
+    private BigDecimal processProductSizes(
             Map<UUID, Integer> productSizesUUIDS,
             Map<UUID, Integer> itemPerOrderQuantity,
             List<ProductSizes> productSizesList) {
@@ -129,6 +160,13 @@ public class OrderServiceImpl implements OrderService {
         productSizesRepository.saveAll(productSizesList);
         return totalPrice;
     }
+    /**
+     * Calculates the total price for a given product and quantity, taking into account any discount.
+     *
+     * @param product the Product entity
+     * @param quantity the quantity ordered
+     * @return the total price as a BigDecimal after applying the product discount
+     */
     private BigDecimal calculateItemPrice(Product product, Integer quantity) {
         return product.getPrice()
                 .multiply(BigDecimal.valueOf(100 - product.getDiscount()))

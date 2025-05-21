@@ -7,8 +7,6 @@ import { Link } from 'react-router-dom';
 const HeroSection = styled.section`
   position: relative;
   width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
   height: 60vh;
   overflow: hidden;
   display: flex;

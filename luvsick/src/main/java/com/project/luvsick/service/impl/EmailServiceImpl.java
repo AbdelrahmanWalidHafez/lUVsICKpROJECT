@@ -1,6 +1,8 @@
 package com.project.luvsick.service.impl;
 
+import com.project.luvsick.model.Order;
 import com.project.luvsick.model.OrderStatus;
+import com.project.luvsick.model.Product;
 import com.project.luvsick.repo.CustomerRepository;
 import com.project.luvsick.service.EmailService;
 import jakarta.mail.MessagingException;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,7 @@ import java.util.UUID;
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender javaMailSender;
     private final CustomerRepository customerRepository;
-
+    private static final String from="luvsick2025@gmail.com";
     @Override
     @Async
     public void sendNewArrivalEmail(UUID id) {
@@ -40,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject(subject);
             helper.setText(body, true);
-            helper.setFrom("andelrahman.walid.804@gmail.com");
+            helper.setFrom(from);
             for (String email:to) {
                 helper.setTo(email);
                 javaMailSender.send(message);
@@ -52,19 +56,23 @@ public class EmailServiceImpl implements EmailService {
             log.error(e.getMessage());
         }
     }
-    @Override
     @Async
-    public void sendOrderReceivedEmail(String email) {
+    @Override
+    public void sendOrderReceivedEmail(String email, Order order) {
 
         String subject = "We Have Received your Order";
-        String body = """
-                Hello, we will notify you on any updates on the order
-                Regards,
-                luvsick""";
+        String productsList = order.getProducts()
+                .stream()
+                .map(Product::getName)
+                .collect(Collectors.joining("<br>"));
 
+        String body = "Order ID: " + order.getId() + "<br>" +
+                "Order Total Price: " + order.getTotalPrice() + "<br>" +
+                "Products:<br>" + productsList + "<br><br>" +
+                "We will notify you on any updates on the order.<br><br>" +
+                "Regards,";
        sendMessage(email,body,subject);
     }
-    @Async
     @Override
     public void sendNewOrderStatusEmail(String email, OrderStatus orderStatus) {
         String subject = "new Updates on your order";
@@ -73,18 +81,17 @@ public class EmailServiceImpl implements EmailService {
                 + "Regards,\nluvsick";
         sendMessage(email,body,subject);
     }
-    private void  sendMessage(String email,String subject,String body){
+    @Async
+    private void  sendMessage(String email, String subject, String body){
         MimeMessage message = javaMailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setSubject(subject);
-            helper.setText(body, true);
-            helper.setFrom("andelrahman.walid.804@gmail.com");
+            helper.setFrom(from);
             helper.setTo(email);
-            javaMailSender.send(message);
+            message.setContent(body,"text/html;charset=utf-8");
             javaMailSender.send(message);
             log.info("the email has been sent");
-
         } catch (MessagingException | MailException e) {
             log.error(e.getMessage());
         }

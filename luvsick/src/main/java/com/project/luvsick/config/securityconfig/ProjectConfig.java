@@ -1,4 +1,4 @@
-package com.project.luvsick.securityconfig;
+package com.project.luvsick.config.securityconfig;
 
 import com.project.luvsick.filter.CsrfCookieFilter;
 import com.project.luvsick.filter.JWTTokenValidationFilter;
@@ -24,12 +24,30 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import java.util.Collections;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-
+/**
+ * Security configuration class for the Luvsick project.
+ *
+ * <p>This class defines the Spring Security filter chain, CORS and CSRF settings,
+ * session management, authentication manager, password encoding, and access control rules.
+ * It also registers custom filters and exception handlers.</p>
+ *
+ * @author Abdelrahman Walid Hafez
+ */
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class ProjectConfig {
-    private final Environment environment;
+    private final  Environment environment;
+    /**
+     * Defines the main security filter chain for HTTP requests.
+     *
+     * <p>Configures CORS policy, CSRF protection, session management, authorization rules,
+     * custom filters for JWT validation and CSRF token handling, and exception handling.</p>
+     *
+     * @param httpSecurity the {@link HttpSecurity} object to configure security
+     * @return the built {@link SecurityFilterChain}
+     * @throws Exception in case of configuration errors
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws  Exception{
         httpSecurity
@@ -58,7 +76,8 @@ public class ProjectConfig {
                         "/api/v1/auth/getAllUsers",
                         "/api/v1/product/newArrivals",
                         "/api/v1/order/getOrders**",
-                        "/api/v1/order/**"
+                        "/api/v1/order/**",
+                            "/swagger-ui/**"
                     ))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JWTTokenValidationFilter(environment), UsernamePasswordAuthenticationFilter.class)
@@ -83,16 +102,35 @@ public class ProjectConfig {
                         .requestMatchers("/api/v1/order/createOrder").permitAll()
                         .requestMatchers("/api/v1/order/getOrders**").permitAll()
                         .requestMatchers(HttpMethod.PUT,"/api/v1/order/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(
                         httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer.accessDeniedHandler(new CustomAccessDeniedHandler()));
         return httpSecurity.build();
     }
+    /**
+     * Password encoder bean to provide secure password hashing.
+     *
+     * <p>Creates a delegating password encoder that supports multiple encoding algorithms.</p>
+     *
+     * @return the {@link PasswordEncoder} instance
+     */
     @Bean
     public static PasswordEncoder passwordEncoder(){
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+    /**
+     * Authentication manager bean configured with a custom username/password authentication provider.
+     *
+     * @param userDetailsService service to load user details by username (email)
+     * @param passwordEncoder password encoder used to validate passwords
+     * @return the configured {@link AuthenticationManager}
+     */
     @Bean
     AuthenticationManager authenticationManager(UserDetailsService userDetailsService,PasswordEncoder passwordEncoder){
         LuvsickUsernamePasswordAuthenticationProvider luvsickUsernamePasswordAuthenticationProvider=

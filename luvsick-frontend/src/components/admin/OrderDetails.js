@@ -56,6 +56,16 @@ const Td = styled.td`
   padding: 0.75rem;
   border-bottom: 1px solid #eee;
 `;
+const SuccessMsg = styled.div`
+  background: #e6ffed;
+  color: #1a7f37;
+  border: 1px solid #b7ebc6;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+`;
 
 const ALL_STATUSES = ["SHIPPED", "CONFIRMED", "CANCELLED", "RECEIVED"];
 const UPDATABLE_STATUSES = ["SHIPPED", "CONFIRMED", "CANCELLED", "RECEIVED"];
@@ -65,6 +75,7 @@ const OrderDetails = () => {
   const [order, setOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => { fetchOrder(); }, [id]);
@@ -84,9 +95,12 @@ const OrderDetails = () => {
   const handleUpdateStatus = async () => {
     if (!newStatus || newStatus === order.orderStatus) return;
     setUpdating(true);
+    setSuccess('');
     try {
       await axios.put(`/api/v1/order/${id}`, null, { params: { orderStatus: newStatus } });
       await fetchOrder();
+      setSuccess('Order status updated successfully!');
+      setTimeout(() => setSuccess(''), 2000);
     } finally {
       setUpdating(false);
     }
@@ -97,6 +111,7 @@ const OrderDetails = () => {
   return (
     <Container>
       <Title>Order Details</Title>
+      {success && <SuccessMsg>{success}</SuccessMsg>}
       <Section>
         <Label>Order ID: </Label><Value>{order.id}</Value><br />
         <Label>Customer: </Label><Value>{order.customerDTO?.name}</Value><br />

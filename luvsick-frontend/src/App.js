@@ -21,6 +21,7 @@ import AdminProductList from './components/products/AdminProductList';
 import Checkout from './components/products/Checkout';
 import OrdersList from './components/admin/OrdersList';
 import OrderDetails from './components/admin/OrderDetails';
+import AboutUs from './components/AboutUs';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -38,6 +39,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/home" element={<Navigate to="/" replace />} />
+      <Route path="/about" element={<AboutUs />} />
       <Route 
         path="/login" 
         element={

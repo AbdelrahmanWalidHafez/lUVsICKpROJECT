@@ -10,7 +10,21 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+/**
+ * Custom access dined handler
+ * @author Abdelrahman Walud
+ */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
+    /**
+     * Handles access denied exception by setting the HTTP response status to 403 (Forbidden),
+     * adding a custom header, and writing a JSON error message body with details.
+     *
+     * @param request                 the HTTP servlet request
+     * @param response                the HTTP servlet response
+     * @param accessDeniedException   the exception indicating the access denial
+     * @throws IOException            if an input or output exception occurs
+     * @throws ServletException       if a servlet exception occurs
+     */
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         LocalDateTime currentTimeStamp= LocalDateTime.now();

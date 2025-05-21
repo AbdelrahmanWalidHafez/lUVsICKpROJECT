@@ -10,7 +10,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * @author Abdelrahman Walid Hafez
+ */
 public class CsrfCookieFilter extends OncePerRequestFilter {
+
+    /**
+     * Filters each request and adds a CSRF token cookie to the response if a CSRF token is available.
+     *
+     * @param request     the incoming {@link HttpServletRequest}
+     * @param response    the outgoing {@link HttpServletResponse}
+     * @param filterChain the {@link FilterChain} to pass control to the next filter
+     * @throws ServletException if an error occurs during filtering
+     * @throws IOException      if an I/O error occurs during filtering
+     */
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

@@ -4,8 +4,7 @@ import com.project.luvsick.service.AuthService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,8 +18,8 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthServiceImpl implements AuthService {
-    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
     private final AuthenticationManager authenticationManager;
     private final Environment env;
     @Override
