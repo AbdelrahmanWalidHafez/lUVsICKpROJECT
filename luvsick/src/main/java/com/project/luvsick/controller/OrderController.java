@@ -65,7 +65,7 @@ public class OrderController {
         }
             List<OrderResponseDTO> orderResponseDTOS = orderService.getOrders(orderStatus, pageNum, sortDir, sortField);
             return ResponseEntity.ok()
-                    .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
+                    .cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
                     .body(orderResponseDTOS);
     }
     /**
