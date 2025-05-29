@@ -1,0 +1,261 @@
+.about-us-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #fafafa;
+}
+
+.about-us-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  border-radius: 0;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-us-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(255,255,255,0.1)"/></svg>');
+  opacity: 0.1;
+}
+
+.about-us-header h1 {
+  font-size: 4rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.tagline {
+  font-size: 1.4rem;
+  color: #fff;
+  font-style: normal;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+.about-us-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: 0 1rem;
+}
+
+section {
+  padding: 3rem;
+  background: white;
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  color: #000;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+  font-weight: 700;
+}
+
+section p {
+  color: #333;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.values-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: flex-start;
+}
+
+.value-card {
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+  position: relative;
+  overflow: hidden;
+}
+
+.value-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #000;
+  transition: width 0.3s ease;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.value-card:hover::before {
+  width: 100%;
+  opacity: 0.1;
+}
+
+.value-card h3 {
+  color: #000;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.value-card p {
+  color: #666;
+  font-size: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.drops-section {
+  background: #000;
+  color: white;
+}
+
+.drops-section h2 {
+  color: white;
+  border-bottom-color: white;
+}
+
+.drops-section p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.audience-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.contact-section {
+  background: #000;
+  color: white;
+}
+
+.contact-section h2 {
+  color: white;
+  border-bottom-color: white;
+}
+
+.contact-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-top: 2rem;
+  justify-content: flex-start;
+}
+
+.contact-card {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contact-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+}
+
+.contact-card h3 {
+  color: #fff;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.contact-card a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.contact-card a:hover {
+  color: #ff4b4b;
+}
+
+.contact-card p {
+  color: #fff;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .about-us-container {
+    padding: 1rem;
+  }
+
+  .about-us-header {
+    padding: 3rem 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .about-us-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .tagline {
+    font-size: 1.1rem;
+  }
+
+  section {
+    padding: 2rem;
+  }
+
+  .values-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  section h2 {
+    font-size: 1.8rem;
+  }
+
+  .contact-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .values-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+} 
