@@ -279,7 +279,7 @@ public class ErrorController {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
-        log.error("Data integrity violation error", ex.getStackTrace());
+        log.error("Data integrity violation error", ex.getMostSpecificCause());
         String errorMessage = "Data integrity error occurred";
         String detailedMessage = ex.getMostSpecificCause().getMessage();
         ApiErrorResponse error = ApiErrorResponse

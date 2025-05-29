@@ -23,6 +23,6 @@ public class SwaggerConfig {
                                 .url("https://www.luvSickDev-Team.com"))
                         .license(new License()
                                 .name("Apache 2.0")
-                                .url("http://www.apache.org/licenses/LICENSE-2.0.html")));
+                                .url("https://www.apache.org/licenses/LICENSE-2.0.html")));
     }
 }

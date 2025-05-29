@@ -29,8 +29,8 @@
         <appender-ref ref="Console" />
     </root>
 
-    <!-- LOG "com.eazybytes.eazyschool*" at ERROR level -->
-    <logger name="com.eazybytes.eazyschool" level="error" additivity="false">
+
+    <logger name="com.project.luvsick" level="error" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>

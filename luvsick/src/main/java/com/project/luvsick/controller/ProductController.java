@@ -2,7 +2,6 @@ package com.project.luvsick.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.luvsick.dto.ProductDTO;
 import com.project.luvsick.dto.ProductResponseDTO;
-import com.project.luvsick.mapper.ProductMapper;
 import com.project.luvsick.model.Product;
 import com.project.luvsick.repo.ProductRepository;
 import com.project.luvsick.service.ProductService;
@@ -35,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductService productService;
-    private final ProductMapper productMapper;
+
     /**
      * Adds a new product with the associated image file.
      * <p>
@@ -120,7 +119,7 @@ public class ProductController {
         }
         List<ProductResponseDTO> productResponseDTOS = productService.getAllProducts(categoryName,pageNum, sortDir, sortField);
         return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
                 .body(productResponseDTOS);
     }
     /**
@@ -137,7 +136,7 @@ public class ProductController {
         
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(product.getImageType()))
-                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
                 .body(product.getImageData());
     }
     /**

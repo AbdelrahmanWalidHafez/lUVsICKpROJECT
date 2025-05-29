@@ -138,7 +138,7 @@ public class AuthController {
     public ResponseEntity<List<UserDTO>>getAllUsers(){
         List<UserDTO> userDTOS=userRepository.findAll().stream().map(userMapper::toDto).collect(Collectors.toList());
         return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES))
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.SECONDS))
                 .body(userDTOS);
     }
     /**

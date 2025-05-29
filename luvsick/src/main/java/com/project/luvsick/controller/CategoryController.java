@@ -66,7 +66,7 @@ public class CategoryController {
     @GetMapping("/getCategories")
     public ResponseEntity<List<CategoryResponseDTO>> getCategories(){
        return ResponseEntity.status(HttpStatus.OK)
-               .cacheControl(CacheControl.maxAge(15,TimeUnit.MINUTES))
+               .cacheControl(CacheControl.maxAge(1,TimeUnit.SECONDS))
                .body(categoryService.getCategories());
     }
 }
